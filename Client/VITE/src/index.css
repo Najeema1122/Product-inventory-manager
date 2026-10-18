@@ -1,111 +1,251 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    color: #1f2937;
+    background: #f3f4f6;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+* {
+    box-sizing: border-box;
 }
 
 body {
-  margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+button,
+input,
+select,
+textarea {
+    font: inherit;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+main,
+#root > div {
+    width: min(1100px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 32px 0;
 }
 
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+    margin: 0 0 24px;
+    color: #111827;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
 }
+
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
+    color: #111827;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+button {
+    min-height: 40px;
+    padding: 9px 16px;
+    border: 0;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.15s ease;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+button:hover:not(:disabled) {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 2px;
+}
+
+.product_disp {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.product_card {
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 4px 12px rgb(15 23 42 / 5%);
+}
+
+.product_card .name,
+.product_card h2 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.product_card p {
+    margin: 8px 0;
+    color: #4b5563;
+}
+
+.product_card strong {
+    color: #b45309;
+}
+
+.button_section {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.button_section button:last-child,
+.product_card button:last-child {
+    background: #dc2626;
+}
+
+.button_section button:last-child:hover:not(:disabled),
+.product_card button:last-child:hover:not(:disabled) {
+    background: #b91c1c;
+}
+
+form {
+    display: grid;
+    gap: 18px;
+    width: min(100%, 600px);
+    margin: 0 auto;
+    padding: 28px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: white;
+    box-shadow: 0 8px 24px rgb(15 23 42 / 6%);
+}
+
+form h1 {
+    margin-bottom: 4px;
+}
+
+form label {
+    display: grid;
+    gap: 7px;
+    color: #374151;
+    font-weight: 600;
+}
+
+form input,
+form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: #111827;
+}
+
+form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+form button + button {
+    margin-top: -8px;
+    background: #6b7280;
+}
+
+form button + button:hover:not(:disabled) {
+    background: #4b5563;
+}
+
+[role="alert"] {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.dashboard_stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 18px;
+    margin: 24px 0 32px;
+}
+
+.dashboard_stats article {
+    padding: 22px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 4px 12px rgb(15 23 42 / 5%);
+}
+
+.dashboard_stats h2 {
+    margin: 0 0 12px;
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+.dashboard_stats p {
+    margin: 0;
+    color: #111827;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+main > div:has(> label) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+main > div > label {
+    display: grid;
+    gap: 6px;
+    color: #374151;
+    font-weight: 600;
+}
+
+main input,
+main select {
+    min-height: 40px;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: white;
+}
+
+main > div:last-child {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 24px 0;
+}
+
+@media (max-width: 600px) {
+    main,
+    #root > div {
+        width: min(100% - 24px, 1100px);
+        padding: 22px 0;
+    }
+
+    form {
+        padding: 20px;
+    }
+
+    .button_section {
+        flex-wrap: wrap;
+    }
 }

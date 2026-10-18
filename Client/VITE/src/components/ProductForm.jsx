@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
-const API_URL = "http://localhost:5000/products";
+const API_URL = "http://localhost:5000/api/products";
 
 const emptyForm = {
     name: "",
     category: "",
     price: "",
     quantity: "",
+    description: "",
 };
 
 const ProductForm = ({ mode }) => {
@@ -31,12 +32,16 @@ const ProductForm = ({ mode }) => {
         const getProduct = async () => {
             try {
                 const response = await axios.get(`${API_URL}/${id}`);
+                const product = response.data;
+
                 setForm({
-                    name: response.data.name ?? "",
-                    category: response.data.category ?? "",
-                    price: response.data.price ?? "",
-                    quantity: response.data.quantity ?? "",
+                    name: product.name ?? "",
+                    category: product.category ?? "",
+                    price: product.price ?? "",
+                    quantity: product.quantity ?? "",
+                    description: product.description ?? "",
                 });
+                setError("");
             } catch (err) {
                 setError(err.response?.data?.message || "Could not load product.");
             } finally {
@@ -55,13 +60,41 @@ const ProductForm = ({ mode }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError("");
-        setSaving(true);
 
         const productData = {
-            ...form,
+            name: form.name.trim(),
+            category: form.category.trim(),
             price: Number(form.price),
             quantity: Number(form.quantity),
+            description: form.description.trim(),
         };
+
+        if (productData.name.length < 3) {
+            setError("Name must be at least 3 characters.");
+            return;
+        }
+
+        if (!productData.category) {
+            setError("Category is required.");
+            return;
+        }
+
+        if (!Number.isFinite(productData.price) || productData.price <= 0) {
+            setError("Price must be greater than 0.");
+            return;
+        }
+
+        if (!Number.isInteger(productData.quantity) || productData.quantity < 0) {
+            setError("Quantity must be a whole number greater than or equal to 0.");
+            return;
+        }
+
+        if (productData.description.length > 200) {
+            setError("Description cannot exceed 200 characters.");
+            return;
+        }
+
+        setSaving(true);
 
         try {
             if (isEditing) {
@@ -78,7 +111,9 @@ const ProductForm = ({ mode }) => {
         }
     };
 
-    if (loading) return <p>Loading product...</p>;
+    if (loading) {
+        return <p>Loading product...</p>;
+    }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -88,8 +123,10 @@ const ProductForm = ({ mode }) => {
                 Name
                 <input
                     name="name"
+                    type="text"
                     value={form.name}
                     onChange={handleChange}
+                    minLength={3}
                     required
                 />
             </label>
@@ -98,6 +135,7 @@ const ProductForm = ({ mode }) => {
                 Category
                 <input
                     name="category"
+                    type="text"
                     value={form.category}
                     onChange={handleChange}
                     required
@@ -109,7 +147,7 @@ const ProductForm = ({ mode }) => {
                 <input
                     name="price"
                     type="number"
-                    min="0"
+                    min="0.01"
                     step="0.01"
                     value={form.price}
                     onChange={handleChange}
@@ -127,6 +165,16 @@ const ProductForm = ({ mode }) => {
                     value={form.quantity}
                     onChange={handleChange}
                     required
+                />
+            </label>
+
+            <label>
+                Description
+                <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    maxLength={200}
                 />
             </label>
 
