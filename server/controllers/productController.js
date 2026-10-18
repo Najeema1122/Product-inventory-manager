@@ -3,8 +3,34 @@ const Product = require("../models/product");
 
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find().populate("product_category");
-    res.json(products);
+    const search = (req.query.search || "").trim();
+    const category = (req.query.category || "").trim();
+
+    const page = Math.max(Number.parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(
+      Math.max(Number.parseInt(req.query.limit, 10) || 5, 1),
+      100
+    );
+
+    const filter = {};
+
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+
+    if (category) {
+      filter.category = category;
+    }
+
+    const totalCount = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const data = await Product.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.json({ data, totalCount, totalPages, page });
   } catch (error) {
     res.status(500).json({ message: "Could not load products." });
   }
@@ -16,8 +42,7 @@ const getProductById = async (req, res) => {
       return res.status(400).json({ message: "Invalid product ID." });
     }
 
-    const product = await Product.findById(req.params.id)
-      .populate("product_category");
+    const product = await Product.findById(req.params.id);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found." });
@@ -31,33 +56,21 @@ const getProductById = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const {
-      product_name,
-      product_category,
-      price,
-      description,
-      image,
-      quantity,
-      status,
-    } = req.body;
-
     const product = await Product.create({
-      product_name,
-      product_category,
-      price,
-      description,
-      image,
-      quantity,
-      status,
+      name: req.body.name,
+      category: req.body.category,
+      price: req.body.price,
+      quantity: req.body.quantity,
+      description: req.body.description,
     });
 
     res.status(201).json(product);
   } catch (error) {
-    res.status(400).json({
-      message: error.name === "ValidationError"
-        ? error.message
-        : "Could not create product.",
-    });
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
+
+    res.status(500).json({ message: "Could not create product." });
   }
 };
 
@@ -67,26 +80,14 @@ const updateProduct = async (req, res) => {
       return res.status(400).json({ message: "Invalid product ID." });
     }
 
-    const {
-      product_name,
-      product_category,
-      price,
-      description,
-      image,
-      quantity,
-      status,
-    } = req.body;
-
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       {
-        product_name,
-        product_category,
-        price,
-        description,
-        image,
-        quantity,
-        status,
+        name: req.body.name,
+        category: req.body.category,
+        price: req.body.price,
+        quantity: req.body.quantity,
+        description: req.body.description,
       },
       { new: true, runValidators: true }
     );
@@ -97,11 +98,11 @@ const updateProduct = async (req, res) => {
 
     res.json(product);
   } catch (error) {
-    res.status(400).json({
-      message: error.name === "ValidationError"
-        ? error.message
-        : "Could not update product.",
-    });
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
+
+    res.status(500).json({ message: "Could not update product." });
   }
 };
 

@@ -8,7 +8,7 @@ const connectDb = async () => {
   }
 
   await mongoose.connect(mongoUri);
-  console.log("Connected to MongoDB Atlas");
+  console.log("Connected to MongoDB");
 };
 
 module.exports = connectDb;
